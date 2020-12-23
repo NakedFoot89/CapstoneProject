@@ -16,20 +16,77 @@ namespace CapstoneProject.Controllers
             return View();
         }
 
-        public ActionResult About()
+        //Action method for displaying 'Student Registration' page
+        public ActionResult StudentRegistration()
         {
-            ViewBag.Message = "Your application description page.";
+            // get all courses for a DropDownList
+            var courseList = GetAllCourses();
 
-            return View();
+            var model = new StudentModel();
+
+            // Create a list of SelectListItems so these can be rendered on the page
+            model.CourseList = GetSelectListItems(courseList);
+
+            return View(model);
         }
 
-        public ActionResult Contact()
+        // Creates Student from StudentModel with StudentRegistration view.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult StudentRegistration(StudentModel model)
         {
-            ViewBag.Message = "Your contact page.";
+            var courseList = GetAllCourses();
 
-            return View();
+            model.CourseList = GetSelectListItems(courseList);
+
+            if (ModelState.IsValid)
+            {
+                CreateStudent(model.StudentID, model.FirstName, model.LastName, model.BirthDate, model.Phone, model.Email, model.Course);
+                return RedirectToAction("Index");
+            }
+            // Something is not right - so render the registration page again,
+            // keeping the data user has entered by supplying the model.
+            return View("StudentRegistration", model);
         }
 
+        // Just return a list of courses - in a real-world application this would call
+        // into data access layer to retrieve courses from a database.
+        private IEnumerable<string> GetAllCourses()
+        {
+            return new List<string>
+            {
+                "Mathematics",
+                "Humanities",
+                "English",
+                "Science",
+            };
+        }
+
+        // This function takes a list of strings and returns a list of SelectListItem objects.
+        // These objects are going to be used later in the StudentRegisteration.html template to render the
+        // DropDownList.
+        private IEnumerable<SelectListItem> GetSelectListItems(IEnumerable<string> elements)
+        {
+            // Create an empty list to hold result of the operation
+            var selectList = new List<SelectListItem>();
+
+            // For each string in the 'elements' variable, create a new SelectListItem object
+            // that has both its Value and Text properties set to a particular value.
+            // This will result in MVC rendering each item as:
+            //     <option value="Course Name">Course Name</option>
+            foreach (var element in elements)
+            {
+                selectList.Add(new SelectListItem
+                {
+                    Value = element,
+                    Text = element
+                });
+            }
+
+            return selectList;
+        }
+
+        // Uses LoadStudents() function to retrieve with a SQL statement a List of Students
         public ActionResult ViewStudents()
         {
             ViewBag.Message = "Student List";
@@ -41,36 +98,20 @@ namespace CapstoneProject.Controllers
             {
                 students.Add(new StudentModel
                 {
+                    StudentID = row.StudentID,
                     FirstName = row.FirstName,
                     LastName = row.LastName,
                     BirthDate = row.BirthDate,
                     Phone = row.Phone,
                     Email = row.Email,
-                    ConfirmEmail = row.Email
+                    ConfirmEmail = row.Email,
+                    Course = row.Course,
                 });
             }
 
             return View(students);
         }
 
-        public ActionResult StudentRegistration()
-        {
-            ViewBag.Message = "Your contact page.";
 
-            return View();
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult StudentRegistration(StudentModel model)
-        {
-            if (ModelState.IsValid)
-            {
-                CreateStudent(model.FirstName, model.LastName, model.BirthDate, model.Phone, model.Email);
-                return RedirectToAction("Index");
-            }
-
-            return View();
-        }
     }
 }
