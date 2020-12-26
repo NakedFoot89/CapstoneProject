@@ -1,28 +1,14 @@
 ﻿@model CapstoneProject.Models.StudentModel
 
-@{
-    ViewBag.Title = "Student Registration";
-}
-
-<h2>Student Registration</h2>
-
 
 @using (Html.BeginForm()) 
 {
     @Html.AntiForgeryToken()
     
 <div class="form-horizontal">
-    <h4>Complete this form to register as a student</h4>
+    <h4>StudentModel</h4>
     <hr />
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
-    <div class="form-group">
-        @Html.LabelFor(model => model.StudentID, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.EditorFor(model => model.StudentID, new { htmlAttributes = new { @class = "form-control" } })
-            @Html.ValidationMessageFor(model => model.StudentID, "", new { @class = "text-danger" })
-        </div>
-    </div>
-
     <div class="form-group">
         @Html.LabelFor(model => model.FirstName, htmlAttributes: new { @class = "control-label col-md-2" })
         <div class="col-md-10">
@@ -56,6 +42,25 @@
     </div>
 
     <div class="form-group">
+        @Html.LabelFor(model => model.StudentID, htmlAttributes: new { @class = "control-label col-md-2" })
+        <div class="col-md-10">
+            @Html.EditorFor(model => model.StudentID, new { htmlAttributes = new { @class = "form-control" } })
+            @Html.ValidationMessageFor(model => model.StudentID, "", new { @class = "text-danger" })
+        </div>
+    </div>
+
+    @* Course selection dropdown *@
+    <div class="form-group">
+        @Html.LabelFor(m => m.Course)
+        @Html.DropDownListFor(m => m.Course, // 1. Store selected value in Model.Course;
+                                             // when page is rendered after postback,
+                                             // take selected value from Model.Course.
+        Model.Courses,
+        "- Please select a Course -",
+        new { @class = "form-control" })
+    </div>
+
+    <div class="form-group">
         @Html.LabelFor(model => model.Email, htmlAttributes: new { @class = "control-label col-md-2" })
         <div class="col-md-10">
             @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control" } })
@@ -68,25 +73,6 @@
         <div class="col-md-10">
             @Html.EditorFor(model => model.ConfirmEmail, new { htmlAttributes = new { @class = "form-control" } })
             @Html.ValidationMessageFor(model => model.ConfirmEmail, "", new { @class = "text-danger" })
-        </div>
-    </div>
-
-    @* State selection dropdown *@
-    <div class="form-group">
-        @Html.LabelFor(model => model.Course, htmlAttributes: new { @class = "control-label col-md-2" })
-        <div class="col-md-10">
-            @Html.DropDownListFor(model => model.Course, // 1. Store selected value in Model.Course;
-                                                         // when page is rendered after postback,
-                                                         // take selected value from Model.Course.
-
-                                  // 2. Take list of values from Model.CourseList
-                                  Model.CourseList,
-
-                                  // 3. Text for the first 'default' option
-                                  "- Please select a course -",
-
-                                  //4. A class name to assign to <select> tag
-                                  new { @class = "form-control" })
         </div>
     </div>
 
