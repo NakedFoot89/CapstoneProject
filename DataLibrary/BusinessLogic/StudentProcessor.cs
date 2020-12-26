@@ -10,7 +10,7 @@ namespace DataLibrary.BusinessLogic
 {
     public static class StudentProcessor
     {
-        public static int CreateStudent(string firstName, string lastName, string birthDate, int phone, string email)
+        public static int CreateStudent(int studentID, string firstName, string lastName, string birthDate, string phone, string email, string course)
         {
             //map student model from front-end to back-end model
             StudentModel data = new StudentModel
